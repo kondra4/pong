@@ -1,0 +1,107 @@
+void *to_lower(const char *str) {
+    char *lower_str = NULL;
+    if (str) {
+        size_t len_lower = strlen(str);
+        lower_str = (char *)malloc((len_lower + 1) * sizeof(char));
+        if (lower_str) {
+            strcpy(lower_str, str);
+            for (char *temp_lower_str = lower_str; *temp_lower_str; temp_lower_str++) {
+                if (*temp_lower_str >= 'A' && *temp_lower_str <= 'Z')
+                    *temp_lower_str += 32;
+            }
+        }
+    }
+    return (void *)lower_str;
+}
+
+// 22
+void *to_upper(const char *str) {
+    char *upper_str = NULL;
+    if (str) {
+        size_t len_upper = strlen(str);
+        upper_str = (char *)malloc((len_upper + 1) * sizeof(char));
+        if (upper_str) {
+            strcpy(upper_str, str);
+            for (char *temp_upper_str = upper_str; *temp_upper_str; temp_upper_str++) {
+                if (*temp_upper_str >= 'a' && *temp_upper_str <= 'z')
+                    *temp_upper_str -= 32;
+            }
+        }
+    }
+    return (void *)upper_str;
+}
+
+// 23
+size_t s21_right_strspn(const char *str1, const char *str2) {
+    size_t count = 0, check = 0;
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    for (size_t k = 0; k < len2; k++) {
+        if (str1[len1 - 1] == str2[k])
+            check++;
+    }
+    size_t flag = 1;
+    for (size_t i = len1 - 1; i > 0 && flag; i--) {
+        flag = 0;
+        for (size_t j = 0; j < len2 && !flag; j++) {
+            if (str1[i] == str2[j]) {
+                count++;
+                flag = 1;
+            }
+        }
+    }
+    return !check? 0: count;
+}
+
+void *trim(const char *src, const char *trim_chars) {
+    char *trim_str = NULL;
+    char *temp_trim_chars = (char *)trim_chars;
+    char *temp_src = (char *)src;
+    if (!src) {
+    } else {
+        char trim_empty[7] = " \t\n\v\f\r\0";
+        if (!temp_trim_chars || strlen(temp_trim_chars) == 0) {
+            temp_trim_chars = trim_empty;
+        }
+        size_t len = strlen(temp_src);
+        size_t count_start = strspn(temp_src, temp_trim_chars);
+        if (len == 0 || len == count_start) {
+            trim_str = (char *)malloc(sizeof(char));
+            trim_str[0] = '\0';
+        } else {
+            size_t count_end = s21_right_strspn(temp_src, temp_trim_chars);
+            size_t newstr = len - count_start - count_end;
+            trim_str = (char *)malloc((newstr + 1) * sizeof(char));
+            for (s21_size_t i = 0; i < newstr; i++)
+                trim_str[i] = src[i+count_start];
+            trim_str[newstr] = '\0';
+        }
+    }
+    return (void *)trim_str;
+}
+
+// 24
+void *insert(const char *src, const char *str, s21_size_t start_index) {
+    char *newstr = NULL;
+    if (!src) {
+    } else {
+        int index = start_index;
+        size_t len_src = strlen(src);
+        if (!str || index < 0 || start_index > len_src) {
+        } else {
+            size_t len_str = strlen(str);
+            size_t n = len_str + len_src;
+            newstr = (char *)calloc((n + 1), sizeof(char));
+            for (size_t i = 0; i < start_index; i++)
+                newstr[i] = src[i];
+            size_t k = 0;
+            for (size_t i = start_index; i < start_index + len_str && k != len_str; i++, k++)
+                newstr[i] = str[k];
+            k = start_index;
+            for (size_t i = len_str + start_index; i < n; i++, k++)
+                newstr[i] = src[k];
+            newstr[n] = '\0';
+        }
+    }
+    return (void *)newstr;
+}
